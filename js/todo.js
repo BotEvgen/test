@@ -115,6 +115,11 @@ function labelChanged() {
   const id = this.getAttribute("id"),
     description = $(".edit-input[id=" + id + "]").val();
 
+  if (description.length === 0) {
+    showTaskList();
+    return false;
+  }
+
   todoList.edit_task(id, description);
   showTaskList();
   return false;
@@ -143,14 +148,13 @@ function taskList() {
   const buttons = document.getElementsByClassName("remove");
   const edit = document.getElementsByClassName("edit");
   const edit_inputs = document.getElementsByClassName("edit-input");
-  //   const checkboxes = $("input[type=checkbox]");
+  const checkboxes = $("input[type=checkbox]");
 
-  //   for (let i = 0; i < checkboxes.length; i++) {
-  //     checkboxes[i].addEventListener(
-  //       "click",
-  //       changeStatus(+checkboxes[i].getAttribute("id"))
-  //     );
-  //   }
+  for (let i = 0; i < checkboxes.length; i++) {
+    checkboxes[i].addEventListener("click", () => {
+      changeStatus(+checkboxes[i].getAttribute("id"));
+    });
+  }
 
   for (let i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener("click", remove);
@@ -158,7 +162,9 @@ function taskList() {
 
   for (let i = 0; i < edit.length; i++) {
     edit[i].addEventListener("dblclick", changeLabel);
-    edit[i].addEventListener("touchmove", changeLabel);
+    edit[i].addEventListener("touchmove", changeLabel, {
+      passive: true,
+    });
   }
 
   for (let i = 0; i < edit_inputs.length; i++) {
@@ -306,7 +312,7 @@ document
 function completedRemove() {
   const inputs = $("input[type=checkbox]");
   for (let i = 0; i < inputs.length; i++) {
-    if (inputs[i].checked == true) {
+    if (inputs[i].checked) {
       todoList.remove_task(inputs[i].id);
     }
   }
